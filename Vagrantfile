@@ -27,6 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
      end
     config.vm.hostname = "node-#{i}"
     config.vm.box="cent7"
+    config.vm.provision "shell", path: "provision.sh"
     end
   end
 end
