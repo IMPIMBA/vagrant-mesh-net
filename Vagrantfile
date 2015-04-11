@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
        config.vm.network "private_network", ip: "17.0.#{(i+1)}.#{(1)}", virtualbox__intnet: "node#{i}-to-node#{(i+1)}"
      end
     config.vm.hostname = "node-#{i}"
-    config.vm.box="cent7"
+    config.vm.box="cent65min"
     config.vm.provision "shell", path: "provision.sh"
     end
   end

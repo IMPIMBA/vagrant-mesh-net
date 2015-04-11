@@ -1,0 +1,58 @@
+/*
+ *	This is an example configuration file.
+ */
+
+# Yes, even shell-like comments work...
+
+# Configure logging
+log syslog { debug, trace, info, remote, warning, error, auth, fatal, bug };
+log stderr all;
+
+router id MARKER;
+
+protocol direct {
+        interface "eth1", "eth2"; # Restrict network interfaces it works with
+}
+
+protocol kernel {
+        learn;                  # Learn all alien routes from the kernel
+        persist;                # Don't remove routes on bird shutdown
+        scan time 20;           # Scan kernel routing table every 20 seconds
+#       import none;            # Default is import all
+        export all;             # Default is export none
+#       kernel table 5;         # Kernel table to synchronize with (default: main)
+}
+
+# This pseudo-protocol watches all interface up/down events.
+protocol device {
+        scan time 10;           # Scan interfaces every 10 seconds
+}
+
+protocol ospf MyOSPF {
+    tick 2;
+    rfc1583compat yes;
+    area 0.0.0.0 {
+        networks {
+            17.0.0.0/8;
+        };
+        stub no;
+        interface "eth1" {
+            hello 9;
+            retransmit 6;
+            cost 10;
+            transmit delay 5;
+            dead count 5;
+            wait 50;
+            type broadcast;
+        };
+        interface "eth2" {
+            hello 9;
+            retransmit 6;
+            cost 10;
+            transmit delay 5;
+            dead count 5;
+            wait 50;
+            type broadcast;
+        };
+    };
+}
