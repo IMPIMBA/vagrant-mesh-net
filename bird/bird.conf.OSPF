@@ -11,7 +11,7 @@ log stderr all;
 router id MARKER;
 
 protocol direct {
-        interface "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"; # Restrict network interfaces it works with
+        interface "eth1", "eth2", "eth3", "eth4", "eth5", "eth6", "eth7"; # Restrict network interfaces it works with
 }
 
 protocol kernel {
@@ -82,6 +82,15 @@ protocol ospf MyOSPF {
             type broadcast;
         };
         interface "eth6" {
+            hello 9;
+            retransmit 6;
+            cost 10;
+            transmit delay 5;
+            dead count 5;
+            wait 50;
+            type broadcast;
+        };
+        interface "eth7" {
             hello 9;
             retransmit 6;
             cost 10;

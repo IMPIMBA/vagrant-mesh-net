@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-# Thanks to: CHRISTOPHER L. LYDICK (http://ece.k-state.edu/sunflower_wiki/images/archive/8/85/20080514163321!Lydick_thesis_noappendix.pdf)
+# Thanks to: CHRISTOPHER L. LYDICK (http://hdl.handle.net/2097/808)
 
 PRIMARYOCTET = "17.0"
 
@@ -87,4 +87,27 @@ def calcZAdress(k, x, y, z, adresses)
 
   #puts("POSZ = " + poszip)
   #puts("NEGZ = " + negzip)
+end
+
+# Write all IPs in array to file
+def writeIPout(addresses)
+  aFile = File.new("meships", "w")
+  if aFile
+    # Do it here :)
+    for address in addresses
+      aFile.syswrite(address + "\n")
+    end
+  else
+    puts("Unable to open meships for writing!")
+  end
+end
+
+# Temporarly method to read mgmt IPs
+def readMgmtIP()
+  array = Array[]
+
+  File.open("mgmtnet", "r").each_line do |line|
+    array.push(line.strip)
+  end
+  return array
 end

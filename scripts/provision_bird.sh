@@ -19,7 +19,7 @@ cp /vagrant/bird/bird.conf.OSPF /etc/bird/bird.conf
 
 # Enable asymetric routing
 # (s. https://access.redhat.com/solutions/53031 )
-echo "$(timestamp): Enable asymetric routing."
+echo "$(timestamp): Enable asymmetric routing."
 echo "2" > /proc/sys/net/ipv4/conf/default/rp_filter
 echo "2" > /proc/sys/net/ipv4/conf/all/rp_filter
 
