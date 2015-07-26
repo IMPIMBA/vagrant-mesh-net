@@ -48,7 +48,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
    (1..nodes).each do |i|
      config.vm.define "node#{i}" do |config|
        ind = (i - 1) * 6
-       generateHostsfileRandom(addresses)
+       generateHostsfile(addresses)
        config.vm.network "private_network", ip: "#{addresses[(ind+0)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
        config.vm.network "private_network", ip: "#{addresses[(ind+1)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
        config.vm.network "private_network", ip: "#{addresses[(ind+2)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"

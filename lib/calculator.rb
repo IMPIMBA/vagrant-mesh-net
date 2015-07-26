@@ -38,9 +38,6 @@ def calcXAdress(k, x, y, z, adresses)
 
   adresses.push(posxip)
   adresses.push(negxip)
-
-  #puts("POSX = " + posxip)
-  #puts("NEGX = " + negxip)
 end
 
 def calcYAdress(k, x, y, z, adresses)
@@ -62,9 +59,6 @@ def calcYAdress(k, x, y, z, adresses)
 
   adresses.push(posyip)
   adresses.push(negyip)
-
-  #puts("POSY = " + posyip)
-  #puts("NEGY = " + negyip)
 end
 
 def calcZAdress(k, x, y, z, adresses)
@@ -84,16 +78,12 @@ def calcZAdress(k, x, y, z, adresses)
 
   adresses.push(poszip)
   adresses.push(negzip)
-
-  #puts("POSZ = " + poszip)
-  #puts("NEGZ = " + negzip)
 end
 
 # Write all IPs in array to file
 def writeIPout(addresses)
   aFile = File.new("meships", "w")
   if aFile
-    # Do it here :)
     for address in addresses
       aFile.syswrite(address + "\n")
     end

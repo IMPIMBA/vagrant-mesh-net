@@ -5,6 +5,15 @@ package.box
 package.box.old
 ge-8.2.0-demo-bin-lx-amd64.tar.gz
 ge-8.2.0-demo-common.tar.gz
+auto_install_template
+Done
+hostsfile
+lib/others/IPCalc.cpp
+lib/others/IPCalc.java
+meships
+Vagrantfile_1D_Mesh
+Vagrantfile_2D_Mesh
+Vagrantfile_6node_ploygon
 
 # Icon must end with two \r
 Icon
