@@ -2,6 +2,15 @@
 # vi: set ft=ruby :
 require 'erb'
 
+# Create the Bird Config Template to deploy on nodes
+def gen_bird_template(conf)
+  File.open("./bird/bird.conf.OSPF", "w") do |bird_config|
+    template = ERB.new(File.read("lib/bird.conf.OSPF.erb"))
+    bird_config.write(template.result(binding))
+  end
+end
+
+# Generate the auto_install_template for UGE
 def gen_install_template()
   adminlist = Array[]
   submitlist = Array[]
@@ -23,7 +32,7 @@ def gen_install_template()
     auto_install_template.write(template.result(binding))
   end
 
-  nodes = adminlist.join(' ') + " " + execl.join(' ')
+  nodes = adminlist.join(' ') + " " + execlist.join(' ')
 
   nodes
 end

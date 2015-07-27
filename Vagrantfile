@@ -1,9 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'yaml'
 require './lib/calculator'
 require './lib/hostsgenerator'
 require './lib/config_renderer'
+require './lib/yml_renderer'
+
+base_dir = File.expand_path(File.dirname(__FILE__))
+conf = read_yml_file(YAML.load_file(File.join(base_dir, "cluster.yml")))
+gen_bird_template(conf)
 
  # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
@@ -11,16 +17,16 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
  config.vm.provider :virtualbox do |vb|
    vb.gui = false
-   vb.memory = 700
-   vb.cpus = 1
+   vb.memory = conf[:vm_mem]
+   vb.cpus = conf[:vm_cpus]
    vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
  end
 
- mgnet = getServiceNodeIPs()
+ servicenet = getServiceNodeIPs()
 
  (1..2).each_with_index do |i, index|
    config.vm.define "nfs#{i}" do |config|
-     config.vm.network "private_network", ip: "#{mgnet[(index * 2)]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
+     config.vm.network "private_network", ip: "#{servicenet[(index * 2)]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
      config.vm.hostname = "nfs#{i}"
      config.vm.box="centos6"
      config.vm.provision "shell", path: "./scripts/provision_ssh.sh"
@@ -32,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
  (1..2).each_with_index do |i, index|
    config.vm.define "login#{i}" do |config|
-     config.vm.network "private_network", ip: "#{mgnet[(index * 2 + 1)]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
+     config.vm.network "private_network", ip: "#{servicenet[(index * 2 + 1)]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
      config.vm.hostname = "login#{i}"
      config.vm.box="centos6"
      config.vm.provision "shell", path: "./scripts/provision_ssh.sh"
@@ -43,25 +49,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
  nodes = 27
  base = (nodes**(1.0/3.0)).round
- mgmcon = 0
+ servicecon = 0
  if base**3 == nodes
    addresses = calculateIPs(3)
    writeIPout(addresses)
+   nfsnodes = conf[:nodes_nfs].split(' ').map(&:to_i)
+   loginnodes = conf[:nodes_login].split(' ').map(&:to_i)
    (1..nodes).each do |i|
      config.vm.define "node#{i}" do |config|
-       ind = (i - 1) * 6
+       index = (i - 1) * 6
        generateHostsfile(addresses)
-       config.vm.network "private_network", ip: "#{addresses[(ind+0)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       config.vm.network "private_network", ip: "#{addresses[(ind+1)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       config.vm.network "private_network", ip: "#{addresses[(ind+2)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       config.vm.network "private_network", ip: "#{addresses[(ind+3)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       config.vm.network "private_network", ip: "#{addresses[(ind+4)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       config.vm.network "private_network", ip: "#{addresses[(ind+5)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
-       if i == 1 || i == 9 || i == 21 || i == 25
-         config.vm.network "private_network", ip: "#{mgnet[(mgmcon)]}", netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
-         mgmcon = mgmcon + 1
+       config.vm.network "private_network", ip: "#{addresses[(index+0)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       config.vm.network "private_network", ip: "#{addresses[(index+1)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       config.vm.network "private_network", ip: "#{addresses[(index+2)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       config.vm.network "private_network", ip: "#{addresses[(index+3)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       config.vm.network "private_network", ip: "#{addresses[(index+4)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       config.vm.network "private_network", ip: "#{addresses[(index+5)]}", netmask: "255.255.255.252", virtualbox__intnet: "inthpcnet", nic_type: "virtio"
+       if i == nfsnodes[0] || i == nfsnodes[1] || i == loginnodes[0] || i == loginnodes[1]
+         config.vm.network "private_network", ip: "#{servicenet[(servicecon)]}", netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
+         servicecon = servicecon + 1
        end
-       if i == 14
+       if i == conf[:nodes_master]
          config.vm.network "private_network", ip: "17.200.0.1", netmask: "255.255.255.252", virtualbox__intnet: "intservicenet", nic_type: "virtio"
        end
        config.vm.hostname = "node#{i}"

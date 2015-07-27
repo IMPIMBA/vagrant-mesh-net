@@ -36,7 +36,7 @@ def generateHostsfileWriter(address, filename)
         nodenr = nodenr + 1
       end
     end
-    tempLogNFSadd(hostsfile)
+    addNFSLog(hostsfile)
     hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4')
     hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6')
   end
@@ -74,7 +74,7 @@ def generateHostsfileRandomWriter(address, filename)
         end
       end
     end
-    tempLogNFSadd(hostsfile)
+    addNFSLog(hostsfile)
     hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
     hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
@@ -115,7 +115,7 @@ def generateHostsfileModulWriter(address, node, filename)
         end
       end
     end
-    tempLogNFSadd(hostsfile)
+    addNFSLog(hostsfile)
     hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
     hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
@@ -132,16 +132,16 @@ def initializeHostsfileDir()
   end
 end
 
-# Temporarly added to make login and nfs nodes available
-def tempLogNFSadd(file)
-  mgmtnet = getServiceNodeIPs()
+# Make login and nfs nodes available
+def addNFSLog(file)
+  servicenet = getServiceNodeIPs()
   i = 0
   nodenr = 1;
-  for entry in mgmtnet
+  for entry in servicenet
     if i % 2 == 0
-      file.puts("%s nfs%d", [ mgmtnet[i].gsub(".0.1",".0.2"), nodenr ])
+      file.puts("%s nfs%d", [ servicenet[i].gsub(".0.1",".0.2"), nodenr ])
     else
-      file.puts("%s login%d", [ mgmtnet[i].gsub(".0.1",".0.2"), nodenr ])
+      file.puts("%s login%d", [ servicenet[i].gsub(".0.1",".0.2"), nodenr ])
       nodenr = nodenr + 1
     end
     i = i + 1

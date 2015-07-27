@@ -17,7 +17,7 @@ protocol direct {
 protocol kernel {
         learn;                  # Learn all alien routes from the kernel
         persist;                # Don't remove routes on bird shutdown
-        scan time 20;           # Scan kernel routing table every 20 seconds
+        scan time <%= conf[:ospf_scan_time] %>;           # Scan kernel routing table every 20 seconds
 #       import none;            # Default is import all
         export all;             # Default is export none
 #       kernel table 5;         # Kernel table to synchronize with (default: main)
@@ -25,77 +25,77 @@ protocol kernel {
 
 # This pseudo-protocol watches all interface up/down events.
 protocol device {
-        scan time 10;           # Scan interfaces every 10 seconds
+        scan time <%= conf[:ospf_scan_time] %>;           # Scan interfaces every 10 seconds
 }
 
 protocol ospf MyOSPF {
     tick 2;
-    rfc1583compat no;
-    area 0.0.0.0 {
+    rfc1583compat yes;
+    area <%= conf[:ospf_area] %> {
         networks {
-            17.0.0.0/16;
+            <%= conf[:ospf_networks] %>;
         };
         stub no;
         interface "eth1" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricX] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth2" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricX] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth3" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricY] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth4" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricY] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth5" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricZ] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth6" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost 10;
+            cost <%= conf[:ospf_metricZ] %>;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };
         interface "eth7" {
-            hello 9;
+            hello <%= conf[:ospf_hello] %>;
             retransmit 6;
             cost 10;
             transmit delay 5;
-            dead count 5;
+            dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
             type broadcast;
         };

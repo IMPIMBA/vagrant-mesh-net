@@ -1,0 +1,22 @@
+# Memory and Cpus setting
+################################################
+vm_mem : 700
+vm_cpus: 1
+
+# OSPF Configuration
+################################################
+scan_time: 20
+hello: 9
+dead_count: 5
+metricX: 10
+metricY: 10
+metricZ: 10
+OSFP_Area: "0.0.0.0"
+networks: "17.0.0.0/8"
+
+# Where should the Servicesnodes be placed
+################################################
+
+nfs:   "1 21"
+login: "9 25"
+master: "14"
