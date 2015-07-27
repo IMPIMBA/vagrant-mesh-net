@@ -3,31 +3,27 @@
 require 'erb'
 
 def gen_install_template()
-  nodes = Array[]
-  adminl = Array[]
-  submitl = Array[]
-  execl = Array[]
+  adminlist = Array[]
+  submitlist = Array[]
+  execlist = Array[]
 
-  adminl.push("master1")
-  adminl.push("login1")
-  adminl.push("login2")
+  adminlist.push("master1")
+  adminlist.push("login1")
+  adminlist.push("login2")
 
-  submitl.push("login1")
-  submitl.push("login2")
+  submitlist.push("login1")
+  submitlist.push("login2")
 
   (1..27).each do |i|
-    execl.push("node" + i.to_s)
+    execlist.push("node" + i.to_s)
   end
 
   File.open("auto_install_template", "w") do |auto_install_template|
-    adminlist = adminl.join(' ')
-    submitlist = submitl.join(' ')
-    execlist = execl.join(' ')
     template = ERB.new(File.read("lib/auto_install_template.erb"))
     auto_install_template.write(template.result(binding))
   end
 
-  nodes = adminl.join(' ') + " " + execl.join(' ')
+  nodes = adminlist.join(' ') + " " + execl.join(' ')
 
   nodes
 end

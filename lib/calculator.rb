@@ -90,10 +90,10 @@ def writeIPout(addresses)
 end
 
 # Temporarly method to read mgmt IPs
-def readMgmtIP()
+def getServiceNodeIPs()
   ipadresses = Array[]
 
-  File.open("mgmtnet", "r").each_line do |line|
+  File.open("servicenode-attach-ips", "r").each_line do |line|
     ipadresses.push(line.strip)
   end
 

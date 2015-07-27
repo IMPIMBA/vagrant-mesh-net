@@ -134,7 +134,7 @@ end
 
 # Temporarly added to make login and nfs nodes available
 def tempLogNFSadd(file)
-  mgmtnet = readMgmtIP()
+  mgmtnet = getServiceNodeIPs()
   i = 0
   nodenr = 1;
   for entry in mgmtnet
