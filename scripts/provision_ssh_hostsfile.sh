@@ -1,9 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # This script configures paswordless ssh and installs hostfiles
-
-# create execd local spool directory
-mkdir -p /UGEexecdspool
-chown -R vagrant:vagrant /UGEexecdspool
 
 # configure passwordless ssh
 sudo -u vagrant mkdir -p /home/vagrant/.ssh
@@ -33,20 +29,3 @@ chown root /root/.ssh/config
 # configure hosts file
 mv /etc/hosts /etc/hosts_orig
 cat /vagrant/hostsfile > /etc/hosts
-
-# TERM needs to be set for the installer
-echo "export TERM=xterm" >> /root/.bashrc
-echo "export TEMR=xterm" >> /home/vagrant/.bashrc
-
-# install man page command to access UGE man pages
-yum install -y man
-
-# install libnuma.so
-yum install -y numactl
-
-# install cgroups (use when UGE version >= 8.1.7p5 is going to be installed)
-yum install -y libcgroup
-# make it persistent
-chkconfig --level 3 cgconfig on
-# enable it
-service cgconfig start

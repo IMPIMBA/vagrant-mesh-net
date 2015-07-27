@@ -1,13 +1,24 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Getting the arguments for setting loginnodes path
 loginnodes=()
 loginnodes+=("login1")
 loginnodes+=("login2")
 
-# create execd local spool directory
-mkdir -p /UGEexecdspool
-chown -R vagrant:vagrant /UGEexecdspool
+# Prepare the nodes
+for i in {1..27..1}
+do
+  # create execd local spool directory
+  ssh root@node$i "mkdir -p /UGEexecdspool; chown -R vagrant:vagrant /UGEexecdspool"
+
+  # TERM needs to be set for the installer
+  ssh root@node$i "echo 'export TERM=xterm' >> /root/.bashrc"
+  ssh root@node$i "echo 'export TEMR=xterm' >> /home/vagrant/.bashrc"
+
+  # install man, numactl, and cgroup
+  ssh root@node$i "yum install -y man numactl libcgroup"
+  ssh root@node$i "chkconfig --level 3 cgconfig on; service cgconfig start"
+done
 
 # Expected to have the UGE demo tar.gz here in vagrant directory
 # if you don't have then download them from http://www.univa.com
@@ -31,11 +42,11 @@ cd /vagrant/UGE
 VERSION="8.2.0-demo"
 
 if [ -f ../ge-$VERSION-bin-lx-amd64.tar.gz ]; then
-   tar zxvpf ../ge-$VERSION-bin-lx-amd64.tar.gz
-   tar zxvpf ../ge-$VERSION-common.tar.gz
+   tar xf ../ge-$VERSION-bin-lx-amd64.tar.gz
+   tar xf ../ge-$VERSION-common.tar.gz
 elif [ -f ../uge-lx-amd64.tar.gz ]; then
-   tar zxvfp ../uge-lx-amd64.tar.gz
-   tar zxvfp ../uge-common.tar.gz
+   tar xf ../uge-lx-amd64.tar.gz
+   tar xf ../uge-common.tar.gz
 else
    echo "NO UGE PACKES FOUND! ABORTING!"
    exit 1
@@ -49,7 +60,7 @@ sudo ./inst_sge -m -x -auto ../auto_install_template
 # 2.1) Adapt the cluster (/bin/csh is not installed in box)
 source /vagrant/UGE/default/common/settings.sh
 # change shell to /bin/sh from /bin/csh
-qconf -mattr queue shell /bin/sh all.q
+qconf -mattr queue shell /bin/bash all.q
 
 # 3.) Change .bashrc of vagrant/root user in order to source UGE environment
 echo "source /vagrant/UGE/default/common/settings.sh" >> /home/vagrant/.bashrc
@@ -64,6 +75,3 @@ done
 
 # FINISHED
 echo "Installation of UGE finished"
-
-# EPEL package support installation
-yum install -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm

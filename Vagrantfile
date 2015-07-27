@@ -82,6 +82,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
    config.vm.provision "shell", path: "./scripts/provision_ssh_hostsfile.sh"
    config.vm.provision "shell", path: "./scripts/provision_bird.sh"
    config.vm.provision "shell", path: "./scripts/provision_nfs_clients.sh", args: nfsclients
+   config.vm.provision "shell", path: "./scripts/provision_openmpi.sh"
    config.vm.provision "shell", path: "./scripts/provision_univa_grid_engine.sh"
  end
 end
