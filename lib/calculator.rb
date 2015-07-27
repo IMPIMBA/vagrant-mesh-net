@@ -82,13 +82,10 @@ end
 
 # Write all IPs in array to file
 def writeIPout(addresses)
-  aFile = File.new("meships", "w")
-  if aFile
+  File.open("meships", "w") do |meships|
     for address in addresses
-      aFile.syswrite(address + "\n")
+      meships.puts(address)
     end
-  else
-    puts("Unable to open meships for writing!")
   end
 end
 
