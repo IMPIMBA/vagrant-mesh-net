@@ -14,10 +14,10 @@ end
 # in input order
 def generateHostsfileEach(address)
   initializeHostsfileDir()
-  (1..27).each_with_index do |nodenr|
+  (1..27).each do |nodenr|
     generateHostsfileWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
   end
-  (1..2).each_with_index do |nodenr|
+  (1..2).each do |nodenr|
     generateHostsfileWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
     generateHostsfileWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
   end
@@ -26,22 +26,19 @@ end
 
 # Creates the individual hostfiles for the specified filename
 def generateHostsfileWriter(address, filename)
-  aFile = File.new(filename, "w")
-  if aFile
+  File.open(filename, "w") do |hostsfile|
     nodenr = 1
     i = 0
     while i < address.length do
-      aFile.syswrite(address[i] + " " + "node" + nodenr.to_s + "\n")
+      hostsfile.puts("%s node%d", [ address[i], nodenr ])
       i = i + 1
       if i % 6 == 0
         nodenr = nodenr + 1
       end
     end
-    tempLogNFSadd(aFile)
-    aFile.syswrite('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
-    aFile.syswrite('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
-  else
-    STDERR.puts("Unable to open file for writing!")
+    tempLogNFSadd(hostsfile)
+    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4')
+    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6')
   end
 end
 
@@ -55,10 +52,10 @@ end
 # in a random order
 def generateHostsfileRandomEach(address)
   initializeHostsfileDir()
-  (1..27).each_with_index do |nodenr|
+  (1..27).each do |nodenr|
     generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
   end
-  (1..2).each_with_index do |nodenr|
+  (1..2).each do |nodenr|
     generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
     generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
   end
@@ -67,22 +64,19 @@ end
 
 # Write random order to specified file
 def generateHostsfileRandomWriter(address, filename)
-  aFile = File.new(filename, "w")
-  if aFile
-    (1..27).each_with_index do |nodenr|
+  File.open(filename, "w") do |hostsfile|
+    (1..27).each do |nodenr|
       rn = rand(6)
-      aFile.syswrite(address[((nodenr - 1) * 6 ) + rn] + " " + "node" + nodenr.to_s + "\n")
-      (0..5).each_with_index do |index|
+      hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + rn], nodenr ])
+      (0..5).each do |index|
         if index != rn
-          aFile.syswrite(address[((nodenr - 1) * 6 ) + index] + " " + "node" + nodenr.to_s + "\n")
+          hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + index], nodenr ])
         end
       end
     end
-    tempLogNFSadd(aFile)
-    aFile.syswrite('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
-    aFile.syswrite('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
-  else
-    STDERR.puts "Unable to open file for writing!"
+    tempLogNFSadd(hostsfile)
+    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
+    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
 end
 
@@ -98,10 +92,10 @@ end
 # in the specified order
 def generateHostsfileModulEach(address, node)
   initializeHostsfileDir()
-  (1..27).each_with_index do |nodenr|
+  (1..27).each do |nodenr|
     generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
   end
-  (1..2).each_with_index do |nodenr|
+  (1..2).each do |nodenr|
     generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
     generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
   end
@@ -110,23 +104,20 @@ end
 
 # Write random order to specified file
 def generateHostsfileModulWriter(address, node, filename)
-  aFile = File.new(filename, "w")
-  if aFile
+  File.open(filename, "w") do |hostsfile|
     i = 0
     (1..27).each_with_index do |nodenr|
       correction = node % 6
-      aFile.syswrite(address[((nodenr - 1) * 6 ) + correction] + " " + "node" + nodenr.to_s + "\n")
+      hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + correction], nodenr ])
       (0..5).each_with_index do |index|
         if index != correction
-          aFile.syswrite(address[((nodenr - 1) * 6 ) + index] + " " + "node" + nodenr.to_s + "\n")
+          hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + index], nodenr ])
         end
       end
     end
-    tempLogNFSadd(aFile)
-    aFile.syswrite('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
-    aFile.syswrite('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
-  else
-    STDERR.puts "Unable to open file for writing!"
+    tempLogNFSadd(hostsfile)
+    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
+    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
 end
 
@@ -145,16 +136,16 @@ end
 def tempLogNFSadd(file)
   mgmtnet = readMgmtIP()
   i = 0
-  name = 1;
+  nodenr = 1;
   for entry in mgmtnet
     if i % 2 == 0
-      file.syswrite(mgmtnet[i].gsub(".0.1",".0.2") + " nfs" + name.to_s + "\n")
+      file.puts("%s nfs%d", [ mgmtnet[i].gsub(".0.1",".0.2"), nodenr ])
     else
-      file.syswrite(mgmtnet[i].gsub(".0.1",".0.2") + " login" + name.to_s + "\n")
-      name = name + 1
+      file.puts("%s login%d", [ mgmtnet[i].gsub(".0.1",".0.2"), nodenr ])
+      nodenr = nodenr + 1
     end
     i = i + 1
   end
-  file.syswrite("17.200.0.1 node14\n")
-  file.syswrite("17.200.0.2 master1\n")
+  file.puts("17.200.0.1 node14\n")
+  file.puts("17.200.0.2 master1\n")
 end

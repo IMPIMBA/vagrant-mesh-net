@@ -94,10 +94,11 @@ end
 
 # Temporarly method to read mgmt IPs
 def readMgmtIP()
-  array = Array[]
+  ipadresses = Array[]
 
   File.open("mgmtnet", "r").each_line do |line|
-    array.push(line.strip)
+    ipadresses.push(line.strip)
   end
-  return array
+
+  ipadresses
 end
