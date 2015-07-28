@@ -5,7 +5,7 @@ require 'yaml'
 
 # Create the Bird Config Template to deploy on nodes
 def gen_bird_template(conf)
-  File.open("./bird/bird.conf.OSPF", "w") do |bird_config|
+  File.open("./bird.conf.OSPF", "w") do |bird_config|
     template = ERB.new(File.read("lib/bird.conf.OSPF.erb"))
     bird_config.write(template.result(binding))
   end
