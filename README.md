@@ -2,7 +2,7 @@ Vagrant Mesh Network with Univa Grid Engine
 ===========================================
 
 This repository contains a yaml, vagrant and other configuration files for setting up a virtual HPC Cluster Environment.
-The execution hosts are connected via a 3D Cube Mesh Network.
+The execution hosts are connected via a 3D Torus Network.
 
 Needed Software
 ---------------

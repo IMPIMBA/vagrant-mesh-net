@@ -1,82 +1,83 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Temporarly requirements
+# Requirements
 require './lib/calculator'
+require './lib/config_renderer'
 
-# Generate static Hostfile for all hosts, always using ipaddresses in input
-# order
-def generateHostsfile(address)
-  generateHostsfileWriter(address, "./hostsfile")
+# Get the cluster.yml values and execute the right method
+def generate_hostsfile(address, conf)
+  hostsfiles = generate_hostsfile_list(conf)
+  case conf[:hostsfile_renderer]
+  when "normal"
+    generate_hostsfile_normal(address, hostsfiles)
+  when "random"
+    generate_hostsfile_random(address, hostsfiles)
+  when "modulo"
+    generate_hostsfile_modulo(address, hostsfiles, conf[:hostsfile_modul])
+  else
+    STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_renderer")
+  end
 end
 
-# Generate an individual hostfile for all hosts, always using ipaddresses
-# in input order
-def generateHostsfileEach(address)
-  initializeHostsfileDir()
-  (1..27).each do |nodenr|
-    generateHostsfileWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
+# Checks the value in cluster.yml how much files should be generated
+def generate_hostsfile_list(conf)
+  hostfiles = Array[]
+  case conf[:hostsfile_files]
+  when "normal"
+    hostfiles.push("./hostsfile")
+  when "own"
+    initializeHostsfileDir()
+    (1..27).each do |nodenr|
+      hostfiles.push("./hostsfiles/hostsfile_node" + nodenr.to_s)
+    end
+    (1..2).each do |nodenr|
+      hostfiles.push("./hostsfiles/hostsfile_nfs" + nodenr.to_s)
+      hostfiles.push("./hostsfiles/hostsfile_login" + nodenr.to_s)
+    end
+    hostfiles.push("./hostsfiles/hostsfile_master1")
+  else
+    STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_files")
   end
-  (1..2).each do |nodenr|
-    generateHostsfileWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
-    generateHostsfileWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
-  end
-  generateHostsfileWriter(address, "./hostsfiles/hostsfile_master1")
+
+  hostfiles
 end
 
 # Creates the individual hostfiles for the specified filename
-def generateHostsfileWriter(address, filename)
-  File.open(filename, "w") do |hostsfile|
-    nodenr = 1
-    i = 0
-    while i < address.length do
-      hostsfile.puts("%s node%d", [ address[i], nodenr ])
-      i = i + 1
-      if i % 6 == 0
-        nodenr = nodenr + 1
+def generate_hostsfile_normal(address, hostsfiles)
+  hostsfiles.each do |filename|
+    File.open(filename, "w") do |hostsfile|
+      nodenr = 1
+      i = 0
+      while i < address.length do
+        hostsfile.puts("%s node%d" % [ address[i], nodenr ])
+        i = i + 1
+        if i % 6 == 0
+          nodenr = nodenr + 1
+        end
       end
+      add_nfs_login_master(hostsfile)
+      add_localhost(hostsfile)
     end
-    addNFSLog(hostsfile)
-    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4')
-    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6')
   end
-end
-
-# To make the routes to hosts a little bit better now a random number generator
-# is used.
-def generateHostsfileRandom(address)
-  generateHostsfileRandomWriter(address, "./hostsfile")
-end
-
-# Generate an individual hostfile for all hosts, using ipaddresses
-# in a random order
-def generateHostsfileRandomEach(address)
-  initializeHostsfileDir()
-  (1..27).each do |nodenr|
-    generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
-  end
-  (1..2).each do |nodenr|
-    generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
-    generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
-  end
-  generateHostsfileRandomWriter(address, "./hostsfiles/hostsfile_master1")
 end
 
 # Write random order to specified file
-def generateHostsfileRandomWriter(address, filename)
-  File.open(filename, "w") do |hostsfile|
-    (1..27).each do |nodenr|
-      rn = rand(6)
-      hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + rn], nodenr ])
-      (0..5).each do |index|
-        if index != rn
-          hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + index], nodenr ])
+def generate_hostsfile_random(address, hostsfiles)
+  hostsfiles.each do |filename|
+    File.open(filename, "w") do |hostsfile|
+      (1..27).each do |nodenr|
+        rn = rand(6)
+        hostsfile.puts("%s node%d" % [ address[((nodenr - 1) * 6 ) + rn], nodenr ])
+        (0..5).each do |index|
+          if index != rn
+            hostsfile.puts("%s node%d" % [ address[((nodenr - 1) * 6 ) + index], nodenr ])
+          end
         end
       end
+      add_nfs_login_master(hostsfile)
+      add_localhost(hostsfile)
     end
-    addNFSLog(hostsfile)
-    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
-    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
 end
 
@@ -84,41 +85,39 @@ end
 # added where you can add the node number and the modulo operation is used
 # to determine the right ip adress for the hosts file. To create good routes
 # call this method again on each node generation.
-def generateHostsfileModul(address, node)
-  generateHostsfileModulWriter(address, node, "./hostsfile")
-end
-
-# Generate an individual hostfile for all hosts, using ipaddresses
-# in the specified order
-def generateHostsfileModulEach(address, node)
-  initializeHostsfileDir()
-  (1..27).each do |nodenr|
-    generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_node" + nodenr.to_s)
-  end
-  (1..2).each do |nodenr|
-    generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_nfs" + nodenr.to_s)
-    generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_login" + nodenr.to_s)
-  end
-  generateHostsfileModulWriter(address, "./hostsfiles/hostsfile_master1")
-end
-
-# Write random order to specified file
-def generateHostsfileModulWriter(address, node, filename)
-  File.open(filename, "w") do |hostsfile|
-    i = 0
-    (1..27).each_with_index do |nodenr|
-      correction = node % 6
-      hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + correction], nodenr ])
-      (0..5).each_with_index do |index|
-        if index != correction
-          hostsfile.puts("%s node%d", [ address[((nodenr - 1) * 6 ) + index], nodenr ])
+def generate_hostsfile_modulo(address, hostsfiles, modul)
+  hostsfiles.each do |filename|
+    File.open(filename, "w") do |hostsfile|
+      (1..27).each_with_index do |nodenr|
+        correction = node % 6
+        hostsfile.puts("%s node%d" % [ address[((nodenr - 1) * 6 ) + correction], nodenr ])
+        (0..5).each_with_index do |index|
+          if index != correction
+            hostsfile.puts("%s node%d" % [ address[((nodenr - 1) * 6 ) + index], nodenr ])
+          end
         end
       end
+      add_nfs_login_master(hostsfile)
+      add_localhost(hostsfile)
     end
-    addNFSLog(hostsfile)
-    hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4' + "\n")
-    hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6' + "\n")
   end
+end
+
+# Hostsfile
+def add_localhost(hostsfile)
+  hostsfile.puts('127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4')
+  hostsfile.puts('::1       localhost localhost.localdomain localhost6 localhost6.localdomain6')
+end
+
+# Make login and nfs nodes available
+def add_nfs_login_master(file)
+  conf = read_yml_file(YAML.load_file("cluster.yml"))
+  (0..1).each do |index|
+    file.puts("%s nfs%d" % [ conf[:ip_nfs].split(' ')[index], (index + 1) ])
+    file.puts("%s login%d" % [ conf[:ip_login].split(' ')[index], (index + 1) ])
+  end
+  file.puts("%s node%d" % [ conf[:ip_master].gsub(".0.1",".0.2"), conf[:nodes_master] ])
+  file.puts("%s master1" % [ conf[:ip_master] ])
 end
 
 # Check if hostsdirectory exists and clear it for the hostfiles
@@ -130,22 +129,4 @@ def initializeHostsfileDir()
       File.delete(path)
     end
   end
-end
-
-# Make login and nfs nodes available
-def addNFSLog(file)
-  servicenet = getServiceNodeIPs()
-  i = 0
-  nodenr = 1;
-  for entry in servicenet
-    if i % 2 == 0
-      file.puts("%s nfs%d", [ servicenet[i].gsub(".0.1",".0.2"), nodenr ])
-    else
-      file.puts("%s login%d", [ servicenet[i].gsub(".0.1",".0.2"), nodenr ])
-      nodenr = nodenr + 1
-    end
-    i = i + 1
-  end
-  file.puts("17.200.0.1 node14\n")
-  file.puts("17.200.0.2 master1\n")
 end

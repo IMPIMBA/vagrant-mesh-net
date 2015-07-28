@@ -39,7 +39,7 @@ protocol ospf MyOSPF {
         interface "eth1" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricX] %>;
+            cost <%= conf[:ospf_metric_x] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
@@ -48,7 +48,7 @@ protocol ospf MyOSPF {
         interface "eth2" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricX] %>;
+            cost <%= conf[:ospf_metric_x] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
@@ -57,7 +57,7 @@ protocol ospf MyOSPF {
         interface "eth3" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricY] %>;
+            cost <%= conf[:ospf_metric_y] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
@@ -66,7 +66,7 @@ protocol ospf MyOSPF {
         interface "eth4" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricY] %>;
+            cost <%= conf[:ospf_metric_y] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
@@ -75,7 +75,7 @@ protocol ospf MyOSPF {
         interface "eth5" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricZ] %>;
+            cost <%= conf[:ospf_metric_z] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
@@ -84,7 +84,7 @@ protocol ospf MyOSPF {
         interface "eth6" {
             hello <%= conf[:ospf_hello] %>;
             retransmit 6;
-            cost <%= conf[:ospf_metricZ] %>;
+            cost <%= conf[:ospf_metric_z] %>;
             transmit delay 5;
             dead count <%= conf[:ospf_dead_count] %>;
             wait 50;
