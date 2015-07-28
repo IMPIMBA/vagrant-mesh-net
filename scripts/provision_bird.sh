@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # This script installs the packets for BIRD and loads the correct configuration.
 
 timestamp() {
@@ -13,13 +13,13 @@ echo "$(timestamp): Turn off IP forwarding."
 echo "0" > /proc/sys/net/ipv4/ip_forward
 
 echo "$(timestamp): Installing BIRD 1.3.8."
-yum install -y /vagrant/bird/bird-1.3.8-1.2.x86_64.rpm
+yum install -y bird
 chkconfig bird on
-cp /vagrant/bird/bird.conf.OSPF /etc/bird/bird.conf
+cp /vagrant/bird.conf.OSPF /etc/bird/bird.conf
 
 # Enable asymetric routing
 # (s. https://access.redhat.com/solutions/53031 )
-echo "$(timestamp): Enable asymetric routing."
+echo "$(timestamp): Enable asymmetric routing."
 echo "2" > /proc/sys/net/ipv4/conf/default/rp_filter
 echo "2" > /proc/sys/net/ipv4/conf/all/rp_filter
 

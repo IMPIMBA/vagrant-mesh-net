@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-# Thanks to: CHRISTOPHER L. LYDICK (http://ece.k-state.edu/sunflower_wiki/images/archive/8/85/20080514163321!Lydick_thesis_noappendix.pdf)
+# Thanks to: CHRISTOPHER L. LYDICK (http://hdl.handle.net/2097/808)
 
 PRIMARYOCTET = "17.0"
 
@@ -38,9 +38,6 @@ def calcXAdress(k, x, y, z, adresses)
 
   adresses.push(posxip)
   adresses.push(negxip)
-
-  #puts("POSX = " + posxip)
-  #puts("NEGX = " + negxip)
 end
 
 def calcYAdress(k, x, y, z, adresses)
@@ -62,9 +59,6 @@ def calcYAdress(k, x, y, z, adresses)
 
   adresses.push(posyip)
   adresses.push(negyip)
-
-  #puts("POSY = " + posyip)
-  #puts("NEGY = " + negyip)
 end
 
 def calcZAdress(k, x, y, z, adresses)
@@ -84,7 +78,31 @@ def calcZAdress(k, x, y, z, adresses)
 
   adresses.push(poszip)
   adresses.push(negzip)
+end
 
-  #puts("POSZ = " + poszip)
-  #puts("NEGZ = " + negzip)
+# Write all IPs in array to file
+def writeIPout(addresses)
+  File.open("meships", "w") do |meships|
+    (1..27).each do |nodenr|
+      meships.puts("node" + nodenr.to_s)
+      index = (nodenr - 1) * 6
+      meships.puts(addresses[index + 0] + " posX")
+      meships.puts(addresses[index + 1] + " negX")
+      meships.puts(addresses[index + 2] + " posY")
+      meships.puts(addresses[index + 3] + " negY")
+      meships.puts(addresses[index + 4] + " posZ")
+      meships.puts(addresses[index + 5] + " negZ")
+    end
+  end
+end
+
+# Temporarly method to read mgmt IPs
+def getServiceNodeIPs()
+  ipadresses = Array[]
+
+  File.open("servicenode-attach-ips", "r").each_line do |line|
+    ipadresses.push(line.strip)
+  end
+
+  ipadresses
 end

@@ -1,0 +1,54 @@
+# Memory and Cpus setting
+################################################
+vm_mem : 700
+vm_cpus: 1
+
+# OSPF Configuration
+################################################
+scan_time:  20
+hello:      9
+dead_count: 5
+metric_x:   10
+metric_y:   10
+metric_z:   10
+ospf_area:  "0.0.0.0"
+networks:   "17.0.0.0/8"
+
+# Where should the Servicesnodes be placed
+################################################
+nfs:
+  -  1
+  - 21
+login:
+  -  9
+  - 25
+master:
+  - 14
+
+# IP Adresses from Servicenodes
+################################################
+ip_nfs:
+ - "17.1.0.1"
+ - "17.2.0.1"
+ip_login:
+  - "17.3.0.1"
+  - "17.4.0.1"
+ip_master:
+  - "17.200.0.1"
+
+# Hostsfile render strategy
+# *) ascending: render file in ascending order
+# *) random: render file in random order
+# *) modulo: render file remainder first
+#
+# Hostfile files
+# *) single_file: create one file in same directory
+# *) file_per_host: create one file for each node in
+#         hostsfiles directory
+#
+# hostsfile_modul only needed if render strategy
+# is modulo
+################################################
+hostsfile_renderer: "ascending"
+hostsfile_files:    "single_file"
+hostsfile_modul:
