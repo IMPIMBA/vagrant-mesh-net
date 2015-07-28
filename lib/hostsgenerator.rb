@@ -9,14 +9,14 @@ require './lib/config_renderer'
 def generate_hostsfile(address, conf)
   hostsfiles = generate_hostsfile_list(conf)
   case conf[:hostsfile_renderer]
-  when "normal"
-    generate_hostsfile_normal(address, hostsfiles)
-  when "random"
-    generate_hostsfile_random(address, hostsfiles)
-  when "modulo"
-    generate_hostsfile_modulo(address, hostsfiles, conf[:hostsfile_modul])
-  else
-    STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_renderer")
+  when "ascending"
+      generate_hostsfile_ascending(address, hostsfiles)
+    when "random"
+      generate_hostsfile_random(address, hostsfiles)
+    when "modulo"
+      generate_hostsfile_modulo(address, hostsfiles, conf[:hostsfile_modul])
+    else
+      STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_renderer")
   end
 end
 
@@ -24,27 +24,27 @@ end
 def generate_hostsfile_list(conf)
   hostfiles = Array[]
   case conf[:hostsfile_files]
-  when "normal"
-    hostfiles.push("./hostsfile")
-  when "own"
-    initializeHostsfileDir()
-    (1..27).each do |nodenr|
-      hostfiles.push("./hostsfiles/hostsfile_node" + nodenr.to_s)
-    end
-    (1..2).each do |nodenr|
-      hostfiles.push("./hostsfiles/hostsfile_nfs" + nodenr.to_s)
-      hostfiles.push("./hostsfiles/hostsfile_login" + nodenr.to_s)
-    end
-    hostfiles.push("./hostsfiles/hostsfile_master1")
-  else
-    STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_files")
+    when "single_file"
+      hostfiles.push("./hostsfile")
+    when "file_per_host"
+      initializeHostsfileDir()
+      (1..27).each do |nodenr|
+        hostfiles.push("./hostsfiles/hostsfile_node" + nodenr.to_s)
+      end
+      (1..2).each do |nodenr|
+        hostfiles.push("./hostsfiles/hostsfile_nfs" + nodenr.to_s)
+        hostfiles.push("./hostsfiles/hostsfile_login" + nodenr.to_s)
+      end
+      hostfiles.push("./hostsfiles/hostsfile_master1")
+    else
+      STDERR.puts("ERROR: Cannot read value in cluster.yml: hostsfile_files")
   end
 
   hostfiles
 end
 
 # Creates the individual hostfiles for the specified filename
-def generate_hostsfile_normal(address, hostsfiles)
+def generate_hostsfile_ascending(address, hostsfiles)
   hostsfiles.each do |filename|
     File.open(filename, "w") do |hostsfile|
       nodenr = 1

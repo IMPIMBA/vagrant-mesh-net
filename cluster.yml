@@ -37,18 +37,18 @@ ip_master:
   - "17.200.0.1"
 
 # Hostsfile render strategy
-# *) normal: render file in ascending order
+# *) ascending: render file in ascending order
 # *) random: render file in random order
 # *) modulo: render file remainder first
 #
 # Hostfile files
-# *) normal: create one file in same directory
-# *) own: create one file for each node in
+# *) single_file: create one file in same directory
+# *) file_per_host: create one file for each node in
 #         hostsfiles directory
 #
 # hostsfile_modul only needed if render strategy
 # is modulo
 ################################################
-hostsfile_renderer: "normal"
-hostsfile_files:    "normal"
+hostsfile_renderer: "ascending"
+hostsfile_files:    "single_file"
 hostsfile_modul:
