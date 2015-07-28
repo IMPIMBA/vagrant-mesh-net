@@ -9,7 +9,7 @@ require './lib/config_renderer'
 def generate_hostsfile(address, conf)
   hostsfiles = generate_hostsfile_list(conf)
   case conf[:hostsfile_renderer]
-  when "ascending"
+    when "ascending"
       generate_hostsfile_ascending(address, hostsfiles)
     when "random"
       generate_hostsfile_random(address, hostsfiles)
