@@ -16,15 +16,25 @@ networks:   "17.0.0.0/8"
 
 # Where should the Servicesnodes be placed
 ################################################
-nfs:    "1 21"
-login:  "9 25"
-master: "14"
+nfs:
+  -  1
+  - 21
+login:
+  -  9
+  - 25
+master:
+  - 14
 
 # IP Adresses from Servicenodes
 ################################################
-ip_nfs:    "17.1.0.1 17.2.0.1"
-ip_login:  "17.3.0.1 17.4.0.1"
-ip_master: "17.200.0.1"
+ip_nfs:
+ - "17.1.0.1"
+ - "17.2.0.1"
+ip_login:
+  - "17.3.0.1"
+  - "17.4.0.1"
+ip_master:
+  - "17.200.0.1"
 
 # Hostsfile render strategy
 # *) normal: render file in ascending order

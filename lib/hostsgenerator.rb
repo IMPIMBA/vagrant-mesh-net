@@ -113,11 +113,11 @@ end
 def add_nfs_login_master(file)
   conf = read_yml_file(YAML.load_file("cluster.yml"))
   (0..1).each do |index|
-    file.puts("%s nfs%d" % [ conf[:ip_nfs].split(' ')[index], (index + 1) ])
-    file.puts("%s login%d" % [ conf[:ip_login].split(' ')[index], (index + 1) ])
+    file.puts("%s nfs%d" % [ conf[:ip_nfs][index], (index + 1) ])
+    file.puts("%s login%d" % [ conf[:ip_login][index], (index + 1) ])
   end
-  file.puts("%s node%d" % [ conf[:ip_master].gsub(".0.1",".0.2"), conf[:nodes_master] ])
-  file.puts("%s master1" % [ conf[:ip_master] ])
+  file.puts("%s node%d" % [ conf[:ip_master][0].gsub(".0.1",".0.2"), conf[:nodes_master][0] ])
+  file.puts("%s master1" % [ conf[:ip_master][0] ])
 end
 
 # Check if hostsdirectory exists and clear it for the hostfiles
