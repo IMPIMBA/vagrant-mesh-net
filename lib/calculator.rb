@@ -83,8 +83,15 @@ end
 # Write all IPs in array to file
 def writeIPout(addresses)
   File.open("meships", "w") do |meships|
-    for address in addresses
-      meships.puts(address)
+    (1..27).each do |nodenr|
+      meships.puts("node" + nodenr.to_s)
+      index = (nodenr - 1) * 6
+      meships.puts(addresses[index + 0] + " posX")
+      meships.puts(addresses[index + 1] + " negX")
+      meships.puts(addresses[index + 2] + " posY")
+      meships.puts(addresses[index + 3] + " negY")
+      meships.puts(addresses[index + 4] + " posZ")
+      meships.puts(addresses[index + 5] + " negZ")
     end
   end
 end

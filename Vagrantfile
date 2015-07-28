@@ -1,11 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require 'yaml'
 require './lib/calculator'
 require './lib/hostsgenerator'
 require './lib/config_renderer'
-require './lib/yml_renderer'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
 conf = read_yml_file(YAML.load_file(File.join(base_dir, "cluster.yml")))
