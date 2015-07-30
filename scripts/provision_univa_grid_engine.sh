@@ -69,8 +69,8 @@ echo "source /vagrant/UGE/default/common/settings.sh" >> /root/.bashrc
 # Make Loginnode path working correctly
 for node in "${loginnodes[@]}"
 do
-  ssh $node 'echo "source /vagrant/UGE/default/common/settings.sh" >> /home/vagrant/.bashrc'
-  ssh $node 'echo "source /vagrant/UGE/default/common/settings.sh" >> /root/.bashrc'
+  ssh root@$node 'echo "source /vagrant/UGE/default/common/settings.sh" >> /home/vagrant/.bashrc'
+  ssh root@$node 'echo "source /vagrant/UGE/default/common/settings.sh" >> /root/.bashrc'
 done
 
 # FINISHED
