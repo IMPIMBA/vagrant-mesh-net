@@ -70,7 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
          config.vm.network "private_network", ip: "#{conf[:ip_login][servicecon_login]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet"
          servicecon_login = servicecon_login + 1
        end
-       if i == conf[:nodes_master]
+       if i == conf[:nodes_master][0]
          config.vm.network "private_network", ip: "#{conf[:ip_master][0]}".gsub(".0.1",".0.2"), netmask: "255.255.255.252", virtualbox__intnet: "intservicenet"#
        end
        config.vm.hostname = "node#{i}"
