@@ -1,0 +1,5 @@
+require 'spec_helper'
+
+describe host('17.0.0.1') do
+  it { should be_reachable }
+end
