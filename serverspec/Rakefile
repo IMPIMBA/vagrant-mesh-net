@@ -9,19 +9,15 @@ $REPORTS  = File.join(".", "reports") # Where to store JSON reports
 
 # Return all roles of a given host
 def roles(host)
-  roles = [ "all" ]
+  roles = [ "network" ]
   case host
   when /^node/
-    roles << "network"
     roles << "compute"
   when /^login/
-    roles << "network"
     roles << "login"
   when /^master/
-    roles << "network"
     roles << "master"
   when /^nfs/
-    roles << "network"
     roles << "nfsserver"
   end
   roles
@@ -30,18 +26,6 @@ end
 # Return all tags associated to an host
 def tags(host)
   tags = ["cluster"]
-  # POP
-  #case host
-  #when /^[^.]+\.sg\./
-  #  tags << "singapore"
-  #when /^[^.]+\.sd\./
-  #  tags << "sidney"
-  #when /^[^.]+\.ny\./
-  #  tags << "newyork"
-  #else
-  #  tags << "paris"
-  #end
-  #tags
 end
 
 # Special version of RakeTask for serverspec which comes with better
