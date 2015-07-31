@@ -9,6 +9,6 @@ describe service('bird') do
   it { should be_running   }
 end
 
-describe file('/etc/bird/bird.conf') do
-  it { should be_readable }
+describe file('/etc/bird.conf') do
+  it { should exist }
 end
