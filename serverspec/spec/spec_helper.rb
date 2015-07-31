@@ -22,14 +22,3 @@ options[:user] ||= Etc.getlogin
 
 set :host,        options[:host_name] || host
 set :ssh_options, options
-
-# Disable sudo
-# set :disable_sudo, true
-#
-#
-# # Set environment variables
-# # set :env, :LANG => 'C', :LC_MESSAGES => 'C' 
-#
-# # Set PATH
-# # set :path, '/sbin:/usr/local/sbin:$PATH'
-#

@@ -5,22 +5,15 @@ describe command('source ~/.bashrc && echo $PATH') do
 end
 
 
-name = host_inventory['hostname'].chars.last
-cmd = "source ~/.bashrc && qsub -b y \"echo testdata >> /data#{name}/testfile\""
-describe command(cmd) do
-  its(:stdout) { should contain 'has been submitted' }
-end
-
-describe command('sleep 5') do
-  its(:exit_status) { should eq 0 }
-end
-
-cmd = "/data#{name}/testfile"
-describe file(cmd) do
-  it { should exist }
-end
-
-cmd = "rm -f " + cmd
+cmd = "source ~/.bashrc;
+       qsub -b y \"echo testdata >> /data1/testfile_$(hostname)\";
+       sleep 7;
+       if [ \"$(cat /data1/testfile_$(hostname))\" == \"testdata\" ]; then
+          rm /data1/testfile;
+          exit 0;
+       else
+         exit 1;
+       fi"
 describe command(cmd) do
   its(:exit_status) { should eq 0 }
 end
