@@ -12,19 +12,15 @@ def roles(host)
   roles = [ "all" ]
   case host
   when /^node/
-    roles << "routing"
     roles << "network"
     roles << "compute"
   when /^login/
-    roles << "routing"
     roles << "network"
     roles << "login"
   when /^master/
-    roles << "routing"
     roles << "network"
     roles << "master"
   when /^nfs/
-    roles << "routing"
     roles << "network"
     roles << "nfsserver"
   end
