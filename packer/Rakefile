@@ -1,0 +1,32 @@
+task :default do
+  puts("Rakefile for creating Box with packer")
+  puts("")
+  puts("rake [options]")
+  puts("")
+  puts("Options:")
+  puts("   *) build -- Builds the box from template")
+  puts("   *) check -- Checks if the box config is correct")
+  puts("   *) buildcheck -- Builds and checks the box")
+  puts("")
+end
+
+task :build do
+  if system("packer build template_CentOS6.json")
+    puts ("Machine build correctly. File: centos6-x64.box")
+  else
+    puts ("Could not build virtual machine")
+  end
+end
+
+task :check do
+  if system("./serverspec/test-box.sh")
+    puts ("Machine installed correctly")
+  else
+    puts ("Error checking machine, please check log above")
+  end
+end
+
+task :buildcheck do
+  build
+  check
+end
