@@ -4,7 +4,6 @@ describe command('source ~/.bashrc && echo $PATH') do
   its(:stdout) { should contain '/vagrant/UGE/bin/lx-amd64' }
 end
 
-
 cmd = "source ~/.bashrc;
        qsub -b y \"echo testdata >> /data1/testfile_$(hostname)\";
        sleep 7;
