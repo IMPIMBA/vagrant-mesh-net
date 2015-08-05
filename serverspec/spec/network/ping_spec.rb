@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'network' do
+describe 'network_ping' do
   it 'All nodes in the cluster should be reachable' do
     expect(host('17.0.0.1')).to be_reachable
     expect(host('17.0.32.2')).to be_reachable

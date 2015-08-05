@@ -8,7 +8,7 @@ cmd = "source ~/.bashrc;
        qsub -b y \"echo testdata >> /data1/testfile_$(hostname)\";
        sleep 7;
        if [ \"$(cat /data1/testfile_$(hostname))\" == \"testdata\" ]; then
-          rm /data1/testfile;
+          rm -f /data1/testfile_$(hostname);
           exit 0;
        else
          exit 1;

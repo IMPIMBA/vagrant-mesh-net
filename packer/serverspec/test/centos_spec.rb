@@ -52,4 +52,10 @@ describe 'box' do
     expect(service('vboxadd-service')).to be_running
   end
 
+  it 'Hopscounter installed' do
+    expect(file('/usr/bin/hopscounter')).to exist
+    expect(file('/usr/bin/hopscounter')).to be_mode(755)
+    expect(file('/usr/bin/hopscounter')).to be_owned_by 'root'
+  end
+
 end
