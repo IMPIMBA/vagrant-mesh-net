@@ -53,9 +53,9 @@ describe 'box' do
   end
 
   it 'Hopscounter installed' do
-    expect(file('/usr/bin/hopscounter')).to exist
-    expect(file('/usr/bin/hopscounter')).to be_mode(755)
-    expect(file('/usr/bin/hopscounter')).to be_owned_by 'root'
+    expect(file('/usr/bin/hopcounter')).to exist
+    expect(file('/usr/bin/hopcounter')).to be_mode(755)
+    expect(file('/usr/bin/hopcounter')).to be_owned_by 'root'
   end
 
 end

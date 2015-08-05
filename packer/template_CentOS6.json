@@ -2,8 +2,8 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "programs/hopscounter",
-      "destination": "/tmp/hopscounter"
+      "source": "programs/hopcounter",
+      "destination": "/tmp/hopcounter"
     },
     {
       "type": "shell",
