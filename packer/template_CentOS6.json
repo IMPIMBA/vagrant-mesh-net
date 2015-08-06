@@ -1,11 +1,6 @@
 {
   "provisioners": [
     {
-      "type": "file",
-      "source": "programs/hopcounter",
-      "destination": "/tmp/hopcounter"
-    },
-    {
       "type": "shell",
       "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
       "override": {
