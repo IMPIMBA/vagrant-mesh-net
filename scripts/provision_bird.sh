@@ -5,9 +5,8 @@ timestamp() {
   date +"%T"
 }
 
-echo "$(timestamp): Installing packages."
+echo "$(timestamp): Updateing packages."
 yum update -y
-yum install -y net-tools traceroute vim
 
 echo "$(timestamp): Turn off IP forwarding."
 echo "0" > /proc/sys/net/ipv4/ip_forward

@@ -37,6 +37,9 @@ describe 'box' do
     expect(package('nload')).to be_installed
     expect(package('iperf3')).to be_installed
     expect(package('iotop')).to be_installed
+    expect(package('net-tools')).to be_installed
+    expect(package('traceroute')).to be_installed
+    expect(package('vim')).to be_installed
   end
 
   it 'should have vagrant ssh key installed and set correctly' do
