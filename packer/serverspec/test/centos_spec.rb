@@ -9,10 +9,6 @@ describe 'box' do
     expect(user 'vagrant').to exist
   end
 
-  it 'should have a vagrant user' do
-    expect(user 'vagrant').to exist
-  end
-
   it 'should have a .vbox_version file' do
     expect(file '/home/vagrant/.vbox_version').to be_file
   end
