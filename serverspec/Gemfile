@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+
+gem "rake"
+gem "serverspec", "~> 2.20.0"
+gem "colorize"
+gem 'json'
+

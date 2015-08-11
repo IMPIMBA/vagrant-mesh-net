@@ -1,0 +1,79 @@
+require 'tmpdir'
+
+task :default do
+  puts("Rakefile for creating Box with packer")
+  puts("")
+  puts("rake [options]")
+  puts("")
+  puts("Options:")
+  puts("   *) build -- Builds the box from template")
+  puts("   *) check -- Checks if the box config is correct")
+  puts("   *) buildcheck -- Builds and checks the box")
+  puts("")
+end
+
+task :build do
+  if system("packer build template_CentOS6.json")
+    puts ("Machine build correctly. File: centos6-x64.box")
+  else
+    puts ("Could not build virtual machine")
+  end
+end
+
+task :check do
+  base_path     = File.dirname(__FILE__)
+  box_path      = base_path + "/centos6-x64.box"
+  test_src_path = base_path + "/serverspec/*_spec.rb"
+  tmp_path      = Dir.tmpdir + "/boxtest"
+  box_name      = "spectest_" + (0..5).map { (65 + rand(26)).chr }.join
+
+  if !system("vagrant plugin list | grep 'serverspec' &> /dev/null")
+    STDERR.puts("Serverspec Plugin for Vagrant not installed")
+  else
+
+    if File.directory?(tmp_path)
+      FileUtils.remove_dir(tmp_path)
+    end
+
+    FileUtils.mkdir(tmp_path)
+
+    # Set VAGRANT_CWD not to search recursivly backwards for Vagrantfiles.
+    ENV['VAGRANT_CWD'] = '/'
+    system("vagrant box remove #{box_name} &> /dev/null")
+    system("vagrant box add #{box_name} #{box_path} &> /dev/null")
+
+    ENV['VAGRANT_CWD'] = tmp_path
+    create_vagrantfile(tmp_path, box_name, test_src_path)
+
+    if system('vagrant up')
+      puts ("Machine installed correctly")
+    else
+      puts ("Error checking machine, please check log above")
+    end
+
+    system('vagrant destroy -f &> /dev/null')
+    ENV['VAGRANT_CWD'] = '/'
+    system('vagrant box remove ${box_name} &> /dev/null')
+    ENV.delete('VAGRANT_CWD')
+
+    if File.directory?(tmp_path)
+      FileUtils.remove_dir(tmp_path)
+    end
+  end
+end
+
+def create_vagrantfile(folder, boxname, specsource)
+  File.open(folder + "/Vagrantfile", "w") do |vagrantfile|
+    vagrantfile.puts("Vagrant.configure('2') do |config|")
+    vagrantfile.puts("config.vm.box = '#{boxname}'")
+    vagrantfile.puts("config.vm.provision :serverspec do |spec|")
+    vagrantfile.puts("spec.pattern = '#{specsource}'")
+    vagrantfile.puts("end")
+    vagrantfile.puts("end")
+  end
+end
+
+task :buildcheck do
+  Rake::Task["build"].invoke
+  Rake::Task["check"].invoke
+end
