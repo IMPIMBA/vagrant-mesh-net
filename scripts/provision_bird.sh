@@ -11,7 +11,7 @@ yum update -y
 echo "$(timestamp): Turn off IP forwarding."
 echo "0" > /proc/sys/net/ipv4/ip_forward
 
-echo "$(timestamp): Installing BIRD 1.4.5"
+echo "$(timestamp): Installing BIRD"
 yum install -y bird
 chkconfig bird on
 cp /vagrant/bird.conf.OSPF /etc/bird.conf
