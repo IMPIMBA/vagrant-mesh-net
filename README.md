@@ -101,6 +101,14 @@ drwxr-xr-x   8 user  group   272 Jul 31 15:13 spec
 drwxr-xr-x   6 user  group   204 Jul 31 15:13 viewer
 ```
 
+First you need to run:
+
+```
+[user@host serverspec]$ bundle install
+```
+
+to get all dependencies for serverspec.
+
 Because of the big number of checks, we included a viewer (Thanks to [Vincent Bernat](https://github.com/vincentbernat/serverspec-example)) to check the results of the tests.
 
 To configure the viewer (here [nginx](http://nginx.org) (Version 1.8.0)) we added following configuration file:
