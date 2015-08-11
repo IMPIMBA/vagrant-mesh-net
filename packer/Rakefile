@@ -27,6 +27,6 @@ task :check do
 end
 
 task :buildcheck do
-  build
-  check
+  Rake::Task["build"].invoke
+  Rake::Task["check"].invoke
 end

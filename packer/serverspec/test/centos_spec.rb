@@ -35,7 +35,7 @@ describe 'box' do
     expect(package('iotop')).to be_installed
     expect(package('net-tools')).to be_installed
     expect(package('traceroute')).to be_installed
-    expect(package('vim')).to be_installed
+    expect(package('vim-common')).to be_installed
   end
 
   it 'should have vagrant ssh key installed and set correctly' do
@@ -50,5 +50,5 @@ describe 'box' do
     expect(service('vboxadd-service')).to be_enabled
     expect(service('vboxadd-service')).to be_running
   end
-  
+
 end
