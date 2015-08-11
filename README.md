@@ -7,20 +7,51 @@ The execution hosts are connected via a 3D Torus Network.
 Needed Software
 ---------------
 
-* Vagrant (Version 1.7.2 or later)
-* Packer (Version 0.8.2 or later)
-* VirtualBox (Version 4.3.30 or later)
+* [Ruby](https://www.ruby-lang.org) (Version 2.2.2 or later)
+* [Vagrant](https://www.vagrantup.com) (Version 1.7.2 or later)
+* [Packer](https://www.packer.io) (Version 0.8.2 or later)
+* [VirtualBox](https://www.virtualbox.org) (Version 4.3.30 or later)
+* [Serverspec](http://serverspec.org) (Version 2.2.0 or later)
+* [Univa Grid Engine](http://www.univa.com) (Version 8.2.0) (Trial Version)
 
 Create the base box
 -------------------
 
 Go into the "packer" directory and run
 
-```sh
-[user@host packer]$ packer build template_CentOS6.json
+```
+[user@host packer]$ rake
+Rakefile for creating Box with packer
+
+rake [options]
+
+Options:
+   *) build -- Builds the box from template
+   *) check -- Checks if the box config is correct
+   *) buildcheck -- Builds and checks the box
 ```
 
-After that a *centos6-x64.box* is created. Now add this file to the vagrant box list:
+Now choose an option, for this example we choose the *buildcheck* option:
+
+```
+[user@host packer]$ rake buildcheck
+virtualbox-iso output will be in this color.
+
+...
+
+Machine build correctly. File: centos6-x64.box
+
+...
+
+Finished in 3.74 seconds (files took 38.6 seconds to load)
+8 examples, 0 failures
+
+Machine installed correctly
+```
+
+After the machine has been build rake outputs that the machine was build correctly. Now the machine is tested if all required porgrams are installed, settings are made correctly and if the vagrant users exist and is able to login via public key over ssh. If it ends with 'Machine installed correctly' everything is fine and the machine is ready to use.
+
+Last you have to add the file *centos6-x64.box* to the vagrant box list:
 
 ```sh
 [user@host packer]$ vagrant box add centos6 centos6-x64.box
@@ -36,6 +67,79 @@ After you created and imported the base box, you just have to say
 ```
 
 in the directory where the Vagrantfile is located.
+
+Checking the Cluster
+--------------------
+
+Now that the Cluster is running we included some *Serverspec* to check if all hosts are available, if the routing demons are running and if it's possible to submit jobs to the cluster.
+
+First we need to configure our hosts ssh client to recognize our clusternode-names:
+
+```
+[user@host ~]$ vagrant ssh config > ~/.ssh/config
+```
+
+Now it"s possible to connect via ssh to a node via:
+
+```
+[user@host ~]$ ssh login1
+```
+
+And you'll be automatically logged in as vagrant.
+
+Now we configure the serverspec Environment.
+
+```sh
+[user@host serverspec]$ ls -al
+total 32
+drwxr-xr-x   7 user  group   238 Jul 31 15:13 .
+drwxr-xr-x  21 user  group   714 Aug  5 11:29 ..
+-rw-r--r--   1 user  group    99 Jul 31 15:13 Gemfile
+-rw-r--r--   1 user  group  5619 Jul 31 15:13 Rakefile
+-rw-r--r--   1 user  group   213 Jul 31 15:13 hosts
+drwxr-xr-x   8 user  group   272 Jul 31 15:13 spec
+drwxr-xr-x   6 user  group   204 Jul 31 15:13 viewer
+```
+
+Because of the big number of checks, we included a viewer (Thanks to [Vincent Bernat](https://github.com/vincentbernat/serverspec-example)) to check the results of the tests.
+
+To configure the viewer (here [nginx](http://nginx.org) (Version 1.8.0)) we added following configuration file:
+
+```
+[user@host ~]$ cat /etc/nginx/conf.d/serverspec.conf
+server {
+   listen 80;
+   server_name host.intern default;
+
+   location / {
+      root /path/to/serverspec/viewer;
+      index index.html;
+   }
+
+   location /reports {
+      autoindex on;
+      root /path/to/serverspec;
+      gzip_static always;
+      gzip_http_version 1.0;
+      gunzip on;
+   }
+}
+```
+
+Now everything is configured and you can now run serverspec and check the cluster with following command:
+
+```
+[user@host serverspec]$ bundle exec rake spec -j 32 -m
+```
+
+Options:
+
+* -j $num ... How many paralell tasks can be started.
+* -m ... Start rake multithreaded.
+
+After the test has finished you can go to your Webserver and check the tests. If all tests are green the cluster works correctly:
+
+![Serverspec Viewer](./serverspec_viewer.png)
 
 How it works
 ------------
