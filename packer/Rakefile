@@ -37,6 +37,7 @@ task :check do
 
     FileUtils.mkdir(tmp_path)
 
+    # Set VAGRANT_CWD not to search recursivly backwards for Vagrantfiles.
     ENV['VAGRANT_CWD'] = '/'
     system("vagrant box remove #{box_name} &> /dev/null")
     system("vagrant box add #{box_name} #{box_path} &> /dev/null")

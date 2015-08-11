@@ -82,7 +82,7 @@ end
 
 # Write all IPs in array to file
 def writeIPout(addresses)
-  File.open("./serverspec/meships", "w") do |meships|
+  File.open("./meships", "w") do |meships|
     (1..27).each do |nodenr|
       meships.puts("node" + nodenr.to_s)
       index = (nodenr - 1) * 6

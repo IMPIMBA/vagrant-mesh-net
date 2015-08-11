@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'network_ping' do
   it 'All nodes in the cluster should be reachable' do
-    File.open(File.dirname(__FILE__) + "/../../meships", "r").each_line do |line|
+    File.open(File.dirname(__FILE__) + "/../../../meships", "r").each_line do |line|
       ipaddress = line.scan(/\d+\.\d+\.\d+\.\d+/)
       if ipaddress != []
         expect(host(ipaddress[0])).to be_reachable
