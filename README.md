@@ -1,5 +1,5 @@
-Vagrant Mesh Network with Univa Grid Engine
-===========================================
+Vagrant Mesh Network for an HPC Cluster Environment
+===================================================
 
 This repository contains a yaml, vagrant and other configuration files for setting up a virtual HPC Cluster Environment.
 The execution hosts are connected via a 3D Torus Network.
@@ -14,10 +14,15 @@ Needed Software
 * [Serverspec](http://serverspec.org) (Version 2.2.0 or later)
 * [Univa Grid Engine](http://www.univa.com) (Version 8.2.0) (Trial Version)
 
+Why HPC Clusters
+----------------
+
+Many fields in research and science require to analyze much data. With a single computer it would take up days or weeks to wait for your results, but if you have the chance to use a HPC Cluster you get results much faster (in our example within hours). Normally HPC Clusters are for universities and research institutes, but with our little project you can run your own HPC Cluster on your Computer in a few steps. Of course it would not be as fast as one of the HPC Clusters in the [TOP 500](http://www.top500.org) list, but it uses the same concept that powers many of the other computers on the list.
+
 The Torus Network
 -----------------
 
-As described above we are using 3D Torus to connect our execution hosts with each other. The Service Nodes (NFS-Servers, Login-Nodes, Queue-Master) are connected to individial hosts configurable via *cluster.yml*.
+As described above we are using 3D Torus to connect our execution hosts with each other. The Service Nodes (NFS-Servers, Login-Nodes, Queue-Master) are connected to individual hosts configurable via *cluster.yml*. The idea of using a 3D Torus network as an interconnect  was also used by Christopher L. Lydick in his [Master thesis](http://krex.k-state.edu/dspace/handle/2097/808). We implemented his IP address generation algorithm for our torus.
 
 * Green lines are edge connections.
 * Blue lines are are normal connections between the hosts.
@@ -167,13 +172,33 @@ After the test has finished you can go to your Webserver and check the tests. If
 
 ![Serverspec Viewer](./images/serverspec_viewer.png)
 
-How it works
-------------
+How it's setup
+--------------
 
-* First the execution Hosts are set up, and configured to have a working "DNS" and "Routing" service.
-* After that the NFS-Servers are setup, and all other machines are are configured to connect to them on specified path.
-* Now the Univa Grid Engine is installed.
-* Login and the submit of jobs now only works loginnodes.
+* First the values from *cluster.yml* are read
+* Next it provisions the service nodes for nfs- and loginservices. (In the provisioning process ssh is configured, the hostname service and the routing daemon are installed and configured, and nfs nodes get the export config)
+* Now we are able to setup the compute nodes, but first it calculates all ipadresses which are used to build the interconnect. Each node also gets hostname service and routing deamon installed.
+* When the node setup is finished, it starts the master host, which controls the queues. The master connects to each hosts and installs the execution deamon, configures the nfs clients to connect to the nfs server.
+
+What do the test do?
+--------------------
+
+We've got two different types of serverspec tests in this project. The first serverspec test is when you"re going to build the base box file for the cluster. This test is based on the serverspe plugin for our provisioner vagrant. After the build process of the machine is finished you can run the test via the Rakefile. It spins up an instance of the build vm and then checks:
+* If there is a root and a vagrant user
+* If SELinux is disabled
+* If [EPEL](https://fedoraproject.org/wiki/EPEL) is installed and configured
+* If all necessary programs are installed
+* If the passwordless ssh authentification of vagrant is configured
+* Last if the VirtualBox Additions are installed and enabled
+
+The second serverspec instance tests the cluster when its running. It checks:
+* If all hosts are reachable and the hops between them do not exceed 4 hosts and if the routing daemon is working
+* If the login nodes have the correct path set and if the job submission is possible
+* If the master node has a correct path and if the qmaster process is running
+* If the nfs nodes have the nfs-tools installed and if the exports are set correctly
+* If the compute nodes have the correct path set and if the execd daemon is running
+
+The results of the second test are not visible in the console they are written to the reports directory and if you configured the webserver correctly it should list the files from that directory on this website and you can click onto a results-file and check if everything is working.
 
 Examples
 --------
@@ -212,3 +237,11 @@ area 0.0.0.0
     distance 30
 ...
 ```
+
+Special Thanks
+--------------
+
+* Petar Forai
+* Georg Rath
+* Christopher L. Lydick
+* Vincent Bernat (Serverspec Viewer)
