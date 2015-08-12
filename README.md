@@ -14,6 +14,24 @@ Needed Software
 * [Serverspec](http://serverspec.org) (Version 2.2.0 or later)
 * [Univa Grid Engine](http://www.univa.com) (Version 8.2.0) (Trial Version)
 
+The Torus Network
+-----------------
+
+As described above we are using 3D Torus to connect our execution hosts with each other. The Service Nodes (NFS-Servers, Login-Nodes, Queue-Master) are connected to individial hosts configurable via *cluster.yml*.
+
+* Green lines are edge connections.
+* Blue lines are are normal connections between the hosts.
+* Black lines are connections to service nodes.
+
+![Torus Network Front](./images/torus_front.png)
+This Picture shows the Torus Network.
+
+![Torus Network Above](./images/torus_above.png)
+Here you can see the edge connections.
+
+![Torus Network Cross](./images/torus_cross.png)
+
+
 Create the base box
 -------------------
 
@@ -147,7 +165,7 @@ Options:
 
 After the test has finished you can go to your Webserver and check the tests. If all tests are green the cluster works correctly:
 
-![Serverspec Viewer](./serverspec_viewer.png)
+![Serverspec Viewer](./images/serverspec_viewer.png)
 
 How it works
 ------------
