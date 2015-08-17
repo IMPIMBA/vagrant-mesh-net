@@ -26,8 +26,8 @@ The Flat Network
 ----------------
 Apart form the torus network, an additional network with a NAT configuration is present. This network is used for external connectivity of the nodes and for SSH access from vagrant. 
 
-* Green lines are edge connections.
-* Blue lines are are normal connections between the hosts.
+* Green lines are edge/wrap around connections.
+* Blue not wrap around links between the hosts.
 * Black lines are connections to service nodes.
 
 ![Torus Network Front](./images/torus_front.png)
