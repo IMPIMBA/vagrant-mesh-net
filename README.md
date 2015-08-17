@@ -1,4 +1,4 @@
-Vagrant Mesh/3D Torus Network for an HPC Cluster Environment
+Vagrant Mesh/3D Torus Network 
 ============================================================
 
 This repository contains a setup forVagrant, the VM automation and managment wrapper, setting up a virtual HPC cluster environment with compute and dedicated service nodes (NFS, login, workload management) which are connected via a 3D torus network/mesh.
